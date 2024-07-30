@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Hóa đơn nhập hàng</title>
+  <link rel="shortcut icon" type="x-icon" href="https://cdn-icons-png.flaticon.com/512/2851/2851468.png">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('aside.html')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('app-sidebar-placeholder').innerHTML = html;
+        });
+    });
+  </script>
+</head>
+
+<body onload="time()" class="app sidebar-mini rtl">
+  <header class="app-header">
+    aria-label="Hide Sidebar"></a>
+    <ul class="app-nav">
+      <li><a class="app-nav__item" href="/index.html"><i class='bx bx-log-out bx-rotate-180'></i> </a></li>
+    </ul>
+  </header>
+  <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+  <aside id="app-sidebar-placeholder"></aside>
+  <main class="app-content">
+    <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb">
+        <li class="breadcrumb-item">Hóa đơn nhập hàng</li>
+        <li class="breadcrumb-item"><a href="#">Thêm đơn hàng</a></li>
+      </ul>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <h3 class="tile-title">Tạo mới hóa đơn</h3>
+          <div class="tile-body">
+            <form class="row">
+              <div class="form-group col-md-4">
+                <label class="control-label">Ngày lập hóa đơn</label>
+                <input class="form-control" type="date" id="invoiceDate">
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">Giờ lập hóa đơn</label>
+                <input class="form-control" type="time" id="invoiceTime">
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">Số lượng</label>
+                <input class="form-control" type="number" id="quantity" oninput="updateTotalPrice()">
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">Đơn giá</label>
+                <input class="form-control" type="number" id="unitPrice" oninput="updateTotalPrice()">
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">Tổng tiền</label>
+                <input class="form-control" type="number" id="totalPrice" readonly>
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">Tên nhà cung cấp</label>
+                <select class="form-control" id="supplier">
+
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">Tên hàng hóa</label>
+                <select class="form-control" id="product">
+                </select>
+              </div>
+            </form>
+            <div class="form-group col-md-4">
+              <button class="btn btn-save" type="button">Lưu hóa đơn</button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/plugins/pace.min.js"></script>
+    <script>
+      function updateTotalPrice() {
+        const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+        const unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
+        const totalPrice = quantity * unitPrice;
+        document.getElementById('totalPrice').value = totalPrice;
+      }
+
+      function saveAndPrintBill() {
+        const invoiceCode = document.getElementById('invoiceCode').value;
+        const invoiceDate = document.getElementById('invoiceDate').value;
+        const invoiceTime = document.getElementById('invoiceTime').value;
+        const quantity = document.getElementById('quantity').value;
+        const unitPrice = document.getElementById('unitPrice').value;
+        const totalPrice = document.getElementById('totalPrice').value;
+        const supplier = document.getElementById('supplier').value;
+        const productCode = document.getElementById('productCode').value;
+        const orderNotes = document.getElementById('orderNotes').value;
+
+        let printContent = `
+          <h3>Thông tin hóa đơn nhập hàng</h3>
+          <p>Mã hóa đơn: ${invoiceCode}</p>
+          <p>Ngày lập hóa đơn: ${invoiceDate}</p>
+          <p>Giờ lập hóa đơn: ${invoiceTime}</p>
+          <p>Số lượng: ${quantity}</p>
+          <p>Đơn giá: ${unitPrice}</p>
+          <p>Tổng tiền: ${totalPrice}</p>
+          <p>Nhà cung cấp: ${supplier}</p>
+          <p>Mã hàng hóa: ${productCode}</p>
+          <p>Ghi chú: ${orderNotes}</p>
+        `;
+
+        const originalContent = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+        window.location.reload();
+      }
+    </script>
+  </body>
+  <Script src="js/AddHoaDon.js"></Script>
+  <script src="js/AddHoaDonNhapHang.js"></script>
+</html>
